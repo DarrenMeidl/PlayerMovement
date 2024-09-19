@@ -563,7 +563,7 @@ CapsuleCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Height: 2
-  m_Direction: 1
+  m_Direction: 0
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &2080656492
 Rigidbody:
@@ -573,7 +573,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2080656485}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 15
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -590,8 +590,8 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 64
-  m_CollisionDetection: 0
+  m_Constraints: 112
+  m_CollisionDetection: 1
 --- !u!114 &2080656493
 MonoBehaviour:
   m_ObjectHideFlags: 0

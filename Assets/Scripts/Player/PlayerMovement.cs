@@ -352,7 +352,7 @@ public class PlayerMovement : MonoBehaviour
         float speedDif = targetSpeed - rb.velocity.x; // the difference between the move speed and the velocity of the player
         float movement = speedDif * accelRate; // the movement of the player
         Vector3 walkDir = new Vector3(direction.x, 0, direction.y);
-        rb.AddForce(movement * walkDir, ForceMode.Force); // add force to the player in the x direction
+        rb.AddForce(walkDir * 200f, ForceMode.Force); // add force to the player in the x direction
     }
     // Function to calculate the moveSpeed variable of the player
     private void CalculateMoveSpeed(){
