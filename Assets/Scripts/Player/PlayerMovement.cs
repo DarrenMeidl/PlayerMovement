@@ -7,9 +7,15 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     //Scriptable object which holds all the player's movement parameters
-    public PlayerData Data; // the player data scriptable object
+    public PlayerData Data; // the player data scriptable object   
 
-#region Serialized Variables + Components
+#region Player Components
+    public Rigidbody rb { get; private set; } // rigidbody of the player
+    public CapsuleCollider playerCollider { get; private set; } // only this script can access the box collider of the player
+    public PlayerInput input { get; private set; }
+#endregion
+
+#region Serialized Variables / Components
     // [Header("Player Particles")]
     // [SerializeField] private ParticleSystem jumpDust; // particle system for the jump dust
     // [SerializeField] private ParticleSystem walkDust; // particle system for the walk dust
@@ -19,13 +25,8 @@ public class PlayerMovement : MonoBehaviour
 
     // [Header("Player Animation")] 
     // [SerializeField] private Animator anim; // only this script can access the animator of the player
-        
-#endregion    
 
-#region Components
-    public Rigidbody rb { get; private set; } // rigidbody of the player
-    public BoxCollider playerCollider { get; private set; } // only this script can access the box collider of the player
-    #endregion
+#endregion
 
 #region State Variables
     // Variables control the various actions the player can perform at any time.
@@ -60,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
 #endregion
 
 #region Input Variables
-    // private Vector3 moveInput;
+    InputAction walkAction;
     public float LastPressedJumpTime { get; private set; } // last time the player pressed the jump button
 #endregion
 
@@ -85,8 +86,12 @@ public class PlayerMovement : MonoBehaviour
 #endregion
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>(); // get the rigidbody of the player
-        playerCollider = GetComponent<BoxCollider>(); // get the box collider of the player
+        rb = GetComponent<Rigidbody>(); // get the rigidbody of the player object
+        playerCollider = GetComponent<CapsuleCollider>(); // get the box collider of the player object
+        input = GetComponent<PlayerInput>(); // get PlayerInput of the player object
+        #region Actions
+        walkAction = input.actions.FindAction("Walk");
+        #endregion
     }   
     
     private void Start(){ // we do this on Start to ensure that the player data is loaded before we start using it
@@ -305,20 +310,15 @@ public class PlayerMovement : MonoBehaviour
         }       
         
     }
-    private void HandleSlide()
-    {
-        // Handle Slide
-        if (isSliding)
-        {
-            Slide();
-        }
-    }
     // Walk function
     private void Walk(float lerpAmount){
         CalculateMoveSpeed(); // calculate the movement speed of the player
 
-        /* HANDLE WALK CODE
-        float targetSpeed = moveInput.x * Data.walkMaxSpeed; // set the target speed to the direction the player is moving times the move speed
+        Debug.Log(walkAction.ReadValue<Vector2>());
+
+        Vector2 direction = walkAction.ReadValue<Vector2>();
+        // HANDLE WALK CODE
+        float targetSpeed = direction.x * Data.walkMaxSpeed; // set the target speed to the direction the player is moving times the move speed
         targetSpeed = Mathf.Lerp(rb.velocity.x, targetSpeed, lerpAmount); // lerp the target speed
 
         #region Calculate AccelRate
@@ -351,8 +351,8 @@ public class PlayerMovement : MonoBehaviour
 
         float speedDif = targetSpeed - rb.velocity.x; // the difference between the move speed and the velocity of the player
         float movement = speedDif * accelRate; // the movement of the player
-        rb.AddForce(movement * Vector2.right, ForceMode.Force); // add force to the player in the x direction
-        */
+        Vector3 walkDir = new Vector3(direction.x, 0, direction.y);
+        rb.AddForce(movement * walkDir, ForceMode.Force); // add force to the player in the x direction
     }
     // Function to calculate the moveSpeed variable of the player
     private void CalculateMoveSpeed(){
@@ -403,9 +403,17 @@ public class PlayerMovement : MonoBehaviour
 		    rb.AddForce(force, ForceMode.Impulse);
 		    #endregion
 	    }
-        #endregion
-#endregion
+    #endregion
+    #endregion
 #region Other Movement Functions
+    private void HandleSlide()
+    {
+        // Handle Slide
+        if (isSliding)
+        {
+            Slide();
+        }
+    }
     private void Slide(){
         //We remove the remaining upwards Impulse to prevent upwards sliding
 		if(rb.velocity.y > .1f)
