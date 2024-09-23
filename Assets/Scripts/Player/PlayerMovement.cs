@@ -67,8 +67,7 @@ public class PlayerMovement : MonoBehaviour
     Vector3 walkDir;
     #endregion
 
-    #region Check Variables
-
+#region Check Variables
     //   [Header("Player Checks")] 
     //   [SerializeField] private Transform wallCheck; // the point where the player checks if there is a wall
     //   [SerializeField] private Transform crouchCeilingPoint; // the point where the player's head is when crouched
@@ -77,8 +76,6 @@ public class PlayerMovement : MonoBehaviour
     //   [SerializeField] private Transform _frontWallCheckPoint;
     //[SerializeField] private Transform _backWallCheckPoint;
     //[SerializeField] private Vector2 _wallCheckSize = new Vector2(0.5f, 1f);
-    public float pHeight;
-    public float groundDrag;
 #endregion
 
 #region Layers & Tags
@@ -223,7 +220,7 @@ public class PlayerMovement : MonoBehaviour
 
         #region Drag Checks
         if (IsGrounded() == true)
-            rb.drag = groundDrag;       
+            rb.drag = Data.groundDrag;       
         else
             rb.drag = 0;
         #endregion
@@ -297,7 +294,7 @@ public class PlayerMovement : MonoBehaviour
     }*/
     private bool IsGrounded(){ // checks if the player is grounded
         // creates a new box the position & size of the player's crouching collider, 0 means it can't rotate, moves down by .1f, is it colliding with jumpable ground?
-        return Physics.Raycast(transform.position, Vector3.down, pHeight * .5f + .2f, jumpableGround); // check if the player is grounded (if the player is touching the ground, return true, else return false)
+        return Physics.Raycast(transform.position, Vector3.down, Data.pHeight * .5f + .2f, jumpableGround); // check if the player is grounded (if the player is touching the ground, return true, else return false)
     }
     public bool CanSlide()
     {
@@ -326,7 +323,7 @@ public class PlayerMovement : MonoBehaviour
         CalculateMoveSpeed(); // calculate the movement speed of the player
 
         Vector2 direction = walkAction.ReadValue<Vector2>();
-        /*// HANDLE WALK CODE
+        /*// OLD WALK CALCULATIONS
         float targetSpeed = direction.x * Data.walkMaxSpeed; // set the target speed to the direction the player is moving times the move speed
         targetSpeed = Mathf.Lerp(rb.velocity.x, targetSpeed, lerpAmount); // lerp the target speed
 
@@ -362,7 +359,7 @@ public class PlayerMovement : MonoBehaviour
         float movement = speedDif * accelRate; // the movement of the player
         */
         walkDir = orientation.forward * direction.y + orientation.right * direction.x;
-        rb.AddForce(walkDir.normalized * 400f, ForceMode.Force); // add force to the player in the x direction
+        rb.AddForce(walkDir.normalized * Data.moveSpeed, ForceMode.Force); // add force to the player in the x direction
     }
     // Function to calculate the moveSpeed variable of the player
     private void CalculateMoveSpeed(){
