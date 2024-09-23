@@ -359,7 +359,7 @@ public class PlayerMovement : MonoBehaviour
         float movement = speedDif * accelRate; // the movement of the player
         */
         walkDir = orientation.forward * direction.y + orientation.right * direction.x;
-        rb.AddForce(walkDir.normalized * Data.moveSpeed, ForceMode.Force); // add force to the player in the x direction
+        rb.AddForce(walkDir.normalized * Data.walkMaxSpeed * 10f, ForceMode.Force); // add force to the player in the x direction
     }
     // Function to calculate the moveSpeed variable of the player
     private void CalculateMoveSpeed(){

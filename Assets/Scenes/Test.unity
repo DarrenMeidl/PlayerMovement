@@ -573,8 +573,6 @@ MonoBehaviour:
   Data: {fileID: 11400000, guid: c40b9756b9225c64299b880bc679769b, type: 2}
   orientation: {fileID: 532846065}
   isJumpCut: 0
-  pHeight: 2
-  groundDrag: 4
   jumpableGround:
     serializedVersion: 2
     m_Bits: 8
@@ -702,7 +700,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2080656485}
   serializedVersion: 4
-  m_Mass: 15
+  m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}

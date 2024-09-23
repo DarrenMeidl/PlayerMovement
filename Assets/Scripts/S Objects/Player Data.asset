@@ -16,11 +16,11 @@ MonoBehaviour:
   maxFallSpeed: 5
   gravityStrength: -6
   gravityScale: 0.6116208
-  walkMaxSpeed: 100
-  moveSpeed: 800
+  walkMaxSpeed: 6
+  moveSpeed: 6
   runAcceleration: 1
-  runAccelAmount: 0.5
-  runDeccelAmount: 0.5
+  runAccelAmount: 8.333333
+  runDeccelAmount: 8.333333
   runDecceleration: 1
   groundDrag: 4
   accelInAir: 0
