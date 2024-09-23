@@ -13,9 +13,9 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody rb { get; private set; } // rigidbody of the player
     public CapsuleCollider playerCollider { get; private set; } // only this script can access the box collider of the player
     public PlayerInput input { get; private set; }
-#endregion
+    #endregion
 
-#region Serialized Variables / Components
+    #region Serialized Variables / Components
     // [Header("Player Particles")]
     // [SerializeField] private ParticleSystem jumpDust; // particle system for the jump dust
     // [SerializeField] private ParticleSystem walkDust; // particle system for the walk dust
@@ -25,7 +25,8 @@ public class PlayerMovement : MonoBehaviour
 
     // [Header("Player Animation")] 
     // [SerializeField] private Animator anim; // only this script can access the animator of the player
-
+    public Transform orientation;
+    Vector3 walkDir;
 #endregion
 
 #region State Variables
@@ -351,8 +352,9 @@ public class PlayerMovement : MonoBehaviour
 
         float speedDif = targetSpeed - rb.velocity.x; // the difference between the move speed and the velocity of the player
         float movement = speedDif * accelRate; // the movement of the player
-        Vector3 walkDir = new Vector3(direction.x, 0, direction.y);
-        rb.AddForce(walkDir * 200f, ForceMode.Force); // add force to the player in the x direction
+        //Vector3 walkDir = new Vector3(direction.x, 0, direction.y);
+        walkDir = orientation.forward * direction.y + orientation.right * direction.x;
+        rb.AddForce(walkDir.normalized * 200f, ForceMode.Force); // add force to the player in the x direction
     }
     // Function to calculate the moveSpeed variable of the player
     private void CalculateMoveSpeed(){
