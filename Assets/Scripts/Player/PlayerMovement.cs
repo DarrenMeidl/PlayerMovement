@@ -219,7 +219,8 @@ public class PlayerMovement : MonoBehaviour
         #endregion
 
         #region Drag Checks
-        if (IsGrounded() == true)
+        rb.drag = Data.groundDrag;
+        if (IsGrounded())
             rb.drag = Data.groundDrag;       
         else
             rb.drag = 0;
@@ -294,7 +295,7 @@ public class PlayerMovement : MonoBehaviour
     }*/
     private bool IsGrounded(){ // checks if the player is grounded
         // creates a new box the position & size of the player's crouching collider, 0 means it can't rotate, moves down by .1f, is it colliding with jumpable ground?
-        return Physics.Raycast(transform.position, Vector3.down, Data.pHeight * .5f + .2f, jumpableGround); // check if the player is grounded (if the player is touching the ground, return true, else return false)
+        return Physics.Raycast(transform.position, Vector3.down, Data.height * .5f + .2f, jumpableGround); // check if the player is grounded (if the player is touching the ground, return true, else return false)
     }
     public bool CanSlide()
     {

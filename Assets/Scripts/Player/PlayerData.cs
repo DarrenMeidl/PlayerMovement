@@ -56,8 +56,8 @@ public class PlayerData : ScriptableObject {
 
 	[Space(20)]
 
-	[Header("Slide")]
-	public float pHeight;
+	[Header("Other")]
+	public float height;
     //Unity Callback, called when the inspector updates
     private void OnValidate()
     {

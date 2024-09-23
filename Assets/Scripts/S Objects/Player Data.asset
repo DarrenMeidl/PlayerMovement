@@ -42,4 +42,4 @@ MonoBehaviour:
   slideAccel: 0
   coyoteTime: 0
   jumpInputBufferTime: 0
-  pHeight: 1
+  height: 2
