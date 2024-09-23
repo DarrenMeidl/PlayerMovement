@@ -365,7 +365,7 @@ GameObject:
   - component: {fileID: 969430297}
   - component: {fileID: 969430296}
   - component: {fileID: 969430295}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -573,6 +573,8 @@ MonoBehaviour:
   Data: {fileID: 11400000, guid: c40b9756b9225c64299b880bc679769b, type: 2}
   orientation: {fileID: 532846065}
   isJumpCut: 0
+  pHeight: 2
+  groundDrag: 5
   jumpableGround:
     serializedVersion: 2
     m_Bits: 8

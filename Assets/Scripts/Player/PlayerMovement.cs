@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     public PlayerInput input { get; private set; }
     #endregion
 
-    #region Serialized Variables / Components
+#region Serialized Variables / Components
     // [Header("Player Particles")]
     // [SerializeField] private ParticleSystem jumpDust; // particle system for the jump dust
     // [SerializeField] private ParticleSystem walkDust; // particle system for the walk dust
@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
     // [Header("Player Animation")] 
     // [SerializeField] private Animator anim; // only this script can access the animator of the player
     public Transform orientation;
-    Vector3 walkDir;
+    
 #endregion
 
 #region State Variables
@@ -64,18 +64,21 @@ public class PlayerMovement : MonoBehaviour
 #region Input Variables
     InputAction walkAction;
     public float LastPressedJumpTime { get; private set; } // last time the player pressed the jump button
-#endregion
+    Vector3 walkDir;
+    #endregion
 
-#region Check Variables
+    #region Check Variables
 
- //   [Header("Player Checks")] 
- //   [SerializeField] private Transform wallCheck; // the point where the player checks if there is a wall
- //   [SerializeField] private Transform crouchCeilingPoint; // the point where the player's head is when crouched
- //   [SerializeField] private float ceillingRadius = .2f; // the radius of the circle that checks if the player is touching the ceiling
- //   [Space(5)]
- //   [SerializeField] private Transform _frontWallCheckPoint;
-	//[SerializeField] private Transform _backWallCheckPoint;
-	//[SerializeField] private Vector2 _wallCheckSize = new Vector2(0.5f, 1f);
+    //   [Header("Player Checks")] 
+    //   [SerializeField] private Transform wallCheck; // the point where the player checks if there is a wall
+    //   [SerializeField] private Transform crouchCeilingPoint; // the point where the player's head is when crouched
+    //   [SerializeField] private float ceillingRadius = .2f; // the radius of the circle that checks if the player is touching the ceiling
+    //   [Space(5)]
+    //   [SerializeField] private Transform _frontWallCheckPoint;
+    //[SerializeField] private Transform _backWallCheckPoint;
+    //[SerializeField] private Vector2 _wallCheckSize = new Vector2(0.5f, 1f);
+    public float pHeight;
+    public float groundDrag;
 #endregion
 
 #region Layers & Tags
@@ -215,9 +218,16 @@ public class PlayerMovement : MonoBehaviour
             //Default gravity if standing on a platform or moving upwards
             SetGravityScale(Data.gravityScale);
         }
-        
+
         #endregion
-         
+
+        #region Drag Checks
+        if (IsGrounded() == true)
+            rb.drag = groundDrag;       
+        else
+            rb.drag = 0;
+        #endregion
+
     }
 
     private void FixedUpdate() {
@@ -287,7 +297,7 @@ public class PlayerMovement : MonoBehaviour
     }*/
     private bool IsGrounded(){ // checks if the player is grounded
         // creates a new box the position & size of the player's crouching collider, 0 means it can't rotate, moves down by .1f, is it colliding with jumpable ground?
-        return Physics2D.BoxCast(playerCollider.bounds.center, playerCollider.bounds.size, 0f, Vector3.down, .1f, jumpableGround); // check if the player is grounded (if the player is touching the ground, return true, else return false)
+        return Physics.Raycast(transform.position, Vector3.down, pHeight * .5f + .2f, jumpableGround); // check if the player is grounded (if the player is touching the ground, return true, else return false)
     }
     public bool CanSlide()
     {
@@ -315,10 +325,8 @@ public class PlayerMovement : MonoBehaviour
     private void Walk(float lerpAmount){
         CalculateMoveSpeed(); // calculate the movement speed of the player
 
-        Debug.Log(walkAction.ReadValue<Vector2>());
-
         Vector2 direction = walkAction.ReadValue<Vector2>();
-        // HANDLE WALK CODE
+        /*// HANDLE WALK CODE
         float targetSpeed = direction.x * Data.walkMaxSpeed; // set the target speed to the direction the player is moving times the move speed
         targetSpeed = Mathf.Lerp(rb.velocity.x, targetSpeed, lerpAmount); // lerp the target speed
 
@@ -352,9 +360,9 @@ public class PlayerMovement : MonoBehaviour
 
         float speedDif = targetSpeed - rb.velocity.x; // the difference between the move speed and the velocity of the player
         float movement = speedDif * accelRate; // the movement of the player
-        //Vector3 walkDir = new Vector3(direction.x, 0, direction.y);
+        */
         walkDir = orientation.forward * direction.y + orientation.right * direction.x;
-        rb.AddForce(walkDir.normalized * 200f, ForceMode.Force); // add force to the player in the x direction
+        rb.AddForce(walkDir.normalized * 400f, ForceMode.Force); // add force to the player in the x direction
     }
     // Function to calculate the moveSpeed variable of the player
     private void CalculateMoveSpeed(){
