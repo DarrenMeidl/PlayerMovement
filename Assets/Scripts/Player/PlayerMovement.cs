@@ -62,9 +62,11 @@ public class PlayerMovement : MonoBehaviour
 #endregion
 
 #region Input Variables
-    InputAction walkAction;
+    InputAction walkAction; // access to walk actions
     public float LastPressedJumpTime { get; private set; } // last time the player pressed the jump button
-    Vector3 walkDir;
+    Vector3 walkDir; // determine direction to walk in
+
+    InputAction jumpAction;
     #endregion
 
 #region Check Variables
@@ -92,6 +94,7 @@ public class PlayerMovement : MonoBehaviour
         input = GetComponent<PlayerInput>(); // get PlayerInput of the player object
         #region Actions
         walkAction = input.actions.FindAction("Walk");
+        jumpAction = input.actions.FindAction("Jump");
         #endregion
     }   
     
@@ -105,11 +108,20 @@ public class PlayerMovement : MonoBehaviour
         LastOnWallTime -= Time.deltaTime;
         LastPressedJumpTime -= Time.deltaTime; // decrease the last pressed jump time by the time
         #endregion
-        
-        #region Input Handler
-        
-        // code for handling movement like walk, jump, wall jump, slide etc.
 
+        #region Input Handler
+
+        // code for handling movement like walk, jump, wall jump, slide etc.
+        bool isJumpHeld = jumpAction.ReadValue<float>() > Data.jumpInputBufferTime; // .1f for small buffer
+        if (isJumpHeld)
+        {
+            Debug.Log("Pressed Jump");
+            OnJumpInput();
+        }
+        else
+        {
+            OnJumpUpInput();
+        }
         #endregion
         
         #region Collision Checks
@@ -394,17 +406,19 @@ public class PlayerMovement : MonoBehaviour
             //Ensures we can't call Jump multiple times from one press during small time window of the coyote or jump buffer time
             LastPressedJumpTime = 0;
             LastOnGroundTime = 0;
+            // reset y velocity
+            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
             //We increase the force applied if we are falling
             //This means we'll always feel like we jump the same amount 
             //(setting the player's Y velocity to 0 beforehand will likely work the same, but I find this more elegant :D)
-            float force = Data.jumpForce;
+            float force = Data.jumpForce * 10f;
             if (rb.velocity.y < -.1f)
             {
                 force -= rb.velocity.y;
             }
 
-            rb.AddForce(Vector3.up * force, ForceMode.Impulse); // add force to the player in the y direction
+            rb.AddForce(transform.up * force, ForceMode.Impulse); // add force to the player in the y direction
                                                                 //AudioManager.Instance.PlayPlayerSFX("Player Jump"); // play the jump sound
 
             //jumpDust.Play(); // play the jump dust particle
@@ -432,7 +446,7 @@ public class PlayerMovement : MonoBehaviour
 		    #endregion
 	    }
     #endregion
-    #endregion
+#endregion
 #region Other Movement Functions
     private void HandleSlide()
     {

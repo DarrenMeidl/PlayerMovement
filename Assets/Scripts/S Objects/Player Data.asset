@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fallGravityMult: 10
   maxFallSpeed: 5
-  gravityStrength: -6
-  gravityScale: 0.6116208
+  gravityStrength: -100
+  gravityScale: 10.19368
   walkMaxSpeed: 6
   moveSpeed: 6
   runAcceleration: 1
@@ -31,9 +31,9 @@ MonoBehaviour:
   jumpHangTimeThreshold: 0
   jumpHangAccelerationMult: 0
   jumpHangMaxSpeedMult: 0
-  jumpHeight: 3
+  jumpHeight: 50
   jumpTimeToApex: 1
-  jumpForce: 6
+  jumpForce: 100
   wallJumpForce: {x: 0, y: 0}
   wallJumpRunLerp: 0.3
   wallJumpTime: 0
