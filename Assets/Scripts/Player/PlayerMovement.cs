@@ -181,42 +181,19 @@ public class PlayerMovement : MonoBehaviour
 			//_lastWallJumpDir = (LastOnWallRightTime > 0) ? -1 : 1;
 
 			WallJump(_lastWallJumpDir);
-		}      
+		}
         #endregion
 
         #region Slide Checks
         // if the player can slide and is moving in the direction of the wall
-			// isSliding = true;
-		// else
-			// isSliding = false;
+        // isSliding = true;
+        // else
+        // isSliding = false;
         #endregion
 
-        #region Gravity
-        //Higher gravity if we've released the jump input or are falling
-        if (isSliding) {
-            SetGravityScale(0);
-        }
-        else if (isJumpCut){
-            //Higher gravity if jump button released
-            SetGravityScale(Data.gravityScale * Data.jumpCutGravityMult);
-            rb.velocity = new Vector3(rb.velocity.x, Mathf.Max(rb.velocity.y, -Data.maxFallSpeed), rb.velocity.z);
-        }
-        else if ((isJumping || isWallJumping || isJumpFalling) && Mathf.Abs(rb.velocity.y) < Data.jumpHangTimeThreshold) {
-            SetGravityScale(Data.gravityScale * Data.jumpHangGravityMult);
-        }
-        // if the player is falling
-        else if (rb.velocity.y < -.1f) {
-            //Higher gravity if falling
-            SetGravityScale(Data.gravityScale * Data.fallGravityMult);
-            //Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
-            rb.velocity = new Vector3(rb.velocity.x, Mathf.Max(rb.velocity.y, -Data.maxFallSpeed), rb.velocity.z);
-        }
-        else {
-            //Default gravity if standing on a platform or moving upwards
-            SetGravityScale(Data.gravityScale);
-        }
-
-        #endregion
+        #region Walk Checks
+        SpeedControl(); 
+        #endregion      
 
         #region Drag Checks
         rb.drag = Data.groundDrag;
@@ -224,6 +201,38 @@ public class PlayerMovement : MonoBehaviour
             rb.drag = Data.groundDrag;       
         else
             rb.drag = 0;
+        #endregion
+
+        #region Gravity
+        //Higher gravity if we've released the jump input or are falling
+        if (isSliding)
+        {
+            SetGravityScale(0);
+        }
+        else if (isJumpCut)
+        {
+            //Higher gravity if jump button released
+            SetGravityScale(Data.gravityScale * Data.jumpCutGravityMult);
+            rb.velocity = new Vector3(rb.velocity.x, Mathf.Max(rb.velocity.y, -Data.maxFallSpeed), rb.velocity.z);
+        }
+        else if ((isJumping || isWallJumping || isJumpFalling) && Mathf.Abs(rb.velocity.y) < Data.jumpHangTimeThreshold)
+        {
+            SetGravityScale(Data.gravityScale * Data.jumpHangGravityMult);
+        }
+        // if the player is falling
+        else if (rb.velocity.y < -.1f)
+        {
+            //Higher gravity if falling
+            SetGravityScale(Data.gravityScale * Data.fallGravityMult);
+            //Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
+            rb.velocity = new Vector3(rb.velocity.x, Mathf.Max(rb.velocity.y, -Data.maxFallSpeed), rb.velocity.z);
+        }
+        else
+        {
+            //Default gravity if standing on a platform or moving upwards
+            SetGravityScale(Data.gravityScale);
+        }
+
         #endregion
 
     }
@@ -365,6 +374,17 @@ public class PlayerMovement : MonoBehaviour
     // Function to calculate the moveSpeed variable of the player
     private void CalculateMoveSpeed(){
         Data.walkMaxSpeed = Data.moveSpeed; // if the player is crouched, set the max speed to crouch speed, else set it to move speed
+    }
+    private void SpeedControl()
+    {
+        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.y);
+
+        // limit velocity if needed
+        if(flatVel.magnitude > Data.walkMaxSpeed)
+        {
+            Vector3 limitedVel = flatVel.normalized * Data.walkMaxSpeed; // calculate what max velocity would be
+            rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z); // apply it
+        }
     }
     #endregion
 #region Jump Functions
