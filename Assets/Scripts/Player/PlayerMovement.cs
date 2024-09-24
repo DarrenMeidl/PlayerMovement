@@ -66,7 +66,7 @@ public class PlayerMovement : MonoBehaviour
     public float LastPressedJumpTime { get; private set; } // last time the player pressed the jump button
     Vector3 walkDir; // determine direction to walk in
 
-    InputAction jumpAction;
+    //private CharacterController _characterController;
     #endregion
 
 #region Check Variables
@@ -92,9 +92,9 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the player object
         playerCollider = GetComponent<CapsuleCollider>(); // get the box collider of the player object
         input = GetComponent<PlayerInput>(); // get PlayerInput of the player object
+        //_characterController = GetComponent<CharacterController>();
         #region Actions
         walkAction = input.actions.FindAction("Walk");
-        jumpAction = input.actions.FindAction("Jump");
         #endregion
     }   
     
@@ -112,16 +112,8 @@ public class PlayerMovement : MonoBehaviour
         #region Input Handler
 
         // code for handling movement like walk, jump, wall jump, slide etc.
-        bool isJumpHeld = jumpAction.ReadValue<float>() > Data.jumpInputBufferTime; // .1f for small buffer
-        if (isJumpHeld)
-        {
-            Debug.Log("Pressed Jump");
-            OnJumpInput();
-        }
-        else
-        {
-            OnJumpUpInput();
-        }
+
+       
         #endregion
         
         #region Collision Checks
@@ -171,14 +163,15 @@ public class PlayerMovement : MonoBehaviour
         }
         // Set the jump bools & check if the player can actually jump
         // if they can jump then perform the jump function
-        if (CanJump() && LastPressedJumpTime > 0){
+        if (IsGrounded()){ //  && LastPressedJumpTime > 0
+            Debug.Log("Calling Jump...");
             isJumping = true; // player is now jumping
             isWallJumping = false; // player is still not wall jumping
             isJumpCut = false; // player still can't jump cut
             isJumpFalling = false; // player isn't jump falling
             Jump(); // perform the jump
         }
-        //WALL JUMP
+        /*//WALL JUMP
 		else if (CanWallJump() && LastPressedJumpTime > 0)
 		{
             //AudioManager.Instance.PlayPlayerSFX("Player Wall Jump"); // play the wall jump sound
@@ -193,7 +186,11 @@ public class PlayerMovement : MonoBehaviour
 			//_lastWallJumpDir = (LastOnWallRightTime > 0) ? -1 : 1;
 
 			WallJump(_lastWallJumpDir);
-		}
+		}*/
+        else
+        {
+            //Debug.Log("CANT JUMP");
+        }
         #endregion
 
         #region Slide Checks
@@ -258,7 +255,8 @@ public class PlayerMovement : MonoBehaviour
 
 #region Handle Inputs
     //Methods which whandle inputs detected & called from Update()
-    public void OnJumpInput() { // if the player is pressing down the jump button
+    public void OnJump() { // if the player is pressing down the jump button
+        Debug.Log("pressed");
 		LastPressedJumpTime = Data.jumpInputBufferTime; // set the last pressed jump time to the time of the jump input buffer
 	}
 
@@ -419,8 +417,8 @@ public class PlayerMovement : MonoBehaviour
             }
 
             rb.AddForce(transform.up * force, ForceMode.Impulse); // add force to the player in the y direction
-                                                                //AudioManager.Instance.PlayPlayerSFX("Player Jump"); // play the jump sound
-
+                                                                  //AudioManager.Instance.PlayPlayerSFX("Player Jump"); // play the jump sound
+            Debug.Log("JUMPED");
             //jumpDust.Play(); // play the jump dust particle
         }
     #endregion

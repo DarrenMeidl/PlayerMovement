@@ -16,9 +16,9 @@
                 },
                 {
                     "name": "Jump",
-                    "type": "PassThrough",
-                    "id": "06083049-043a-4069-a12d-63eb0dac8dd4",
-                    "expectedControlType": "Axis",
+                    "type": "Button",
+                    "id": "09793e53-f978-455d-9664-58175b42eda2",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -82,8 +82,19 @@
                 },
                 {
                     "name": "",
-                    "id": "d7551118-2e52-4373-b6ad-5c33329227f4",
+                    "id": "edf0348c-835d-4e5a-bb56-2a1731b9720a",
                     "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f42b4b6e-188f-439a-bd8f-de73a795fd7c",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
