@@ -213,7 +213,7 @@ public class PlayerMovement : MonoBehaviour
         #endregion
 
         #region Gravity
-        //Higher gravity if we've released the jump input or are falling
+        /*//Higher gravity if we've released the jump input or are falling
         if (isSliding)
         {
             SetGravityScale(0);
@@ -241,7 +241,7 @@ public class PlayerMovement : MonoBehaviour
             //Default gravity if standing on a platform or moving upwards
             SetGravityScale(Data.gravityScale);
         }
-
+        */
         #endregion
 
     }
@@ -406,18 +406,8 @@ public class PlayerMovement : MonoBehaviour
             LastOnGroundTime = 0;
             // reset y velocity
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
-            //We increase the force applied if we are falling
-            //This means we'll always feel like we jump the same amount 
-            //(setting the player's Y velocity to 0 beforehand will likely work the same, but I find this more elegant :D)
-            float force = Data.jumpForce * 10f;
-            if (rb.velocity.y < -.1f)
-            {
-                force -= rb.velocity.y;
-            }
-
-            rb.AddForce(transform.up * force, ForceMode.Impulse); // add force to the player in the y direction
-                                                                  //AudioManager.Instance.PlayPlayerSFX("Player Jump"); // play the jump sound
+            rb.AddForce(transform.up * Data.jumpForce, ForceMode.Impulse); // add force to the player in the y direction
+            //AudioManager.Instance.PlayPlayerSFX("Player Jump"); // play the jump sound
             Debug.Log("JUMPED");
             //jumpDust.Play(); // play the jump dust particle
         }

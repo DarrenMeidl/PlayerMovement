@@ -5,9 +5,11 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class CustomGravity : MonoBehaviour
 {
+    //Scriptable object which holds all the player's movement parameters
+    public PlayerData Data; // the player data scriptable object   
+
     // Gravity Scale editable on the inspector
     // providing a gravity scale per object
-
     [SerializeField] private float gravityScale = 1.0f;
 
     // Global Gravity doesn't appear in the inspector. Modify it here in the code
@@ -15,17 +17,26 @@ public class CustomGravity : MonoBehaviour
 
     public static float globalGravity = -9.81f;
 
-    Rigidbody m_rb;
+    Rigidbody rb;
+    PlayerMovement pm;
+    private bool usePlayerData;
 
     void OnEnable()
     {
-        m_rb = GetComponent<Rigidbody>();
-        m_rb.useGravity = false;
+        rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
+
+        pm = GetComponent<PlayerMovement>();
+        if (pm != null)
+        {
+            gravityScale = Data.fallGravityMult;
+            usePlayerData = true;
+        }  
     }
 
     void FixedUpdate()
     {
         Vector3 gravity = globalGravity * gravityScale * Vector3.up;
-        m_rb.AddForce(gravity, ForceMode.Acceleration);
+        rb.AddForce(gravity, ForceMode.Acceleration);
     }
 }

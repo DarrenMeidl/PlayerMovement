@@ -35,7 +35,8 @@ public class PlayerData : ScriptableObject {
     [Header("Jump")]
 	public float jumpHeight; //Height of the player's jump
 	public float jumpTimeToApex; //Time between applying the jump force and reaching the desired jump height. These values also control the player's gravity and jump force.
-	[HideInInspector] public float jumpForce; //The actual force applied (upwards) to the player when they jump.	
+	//[HideInInspector] public float jumpForce; //The actual force applied (upwards) to the player when they jump.	
+	public float jumpForce;
 
 	[Header("Wall Jump")]
 	public Vector2 wallJumpForce; //The actual force (this time set by us) applied to the player when wall jumping.
@@ -73,7 +74,7 @@ public class PlayerData : ScriptableObject {
         
         // JUMP
         //Calculate jumpForce using the formula (initialJumpVelocity = gravity * timeToJumpApex)
-		jumpForce = Mathf.Abs(gravityStrength) * jumpTimeToApex;
+		//jumpForce = Mathf.Abs(gravityStrength) * jumpTimeToApex;
         
 		#region Acceleration Ranges
         // These clamps ensure that the acceleration values are within a certain range
