@@ -49,7 +49,6 @@ public class PlayerMovement : MonoBehaviour
     public float jumpCooldown;
     public float airMultiplier;
     bool readyToJump;
-    public KeyCode jumpKey = KeyCode.Space;
 
     // Wall Jump
     private float _wallJumpStartTime;
@@ -167,7 +166,7 @@ public class PlayerMovement : MonoBehaviour
             isJumpCut = false; // set the player to not be jump cutting
             isJumpFalling = false; // set the player to not be jump falling
         }
-        Debug.Log("READY TO JUMP: " + readyToJump);
+        /*Debug.Log("READY TO JUMP: " + readyToJump);
         Debug.Log("GROUNDED: " + IsGrounded());
         if (Input.GetKey(jumpKey) && readyToJump && IsGrounded())
         {
@@ -184,17 +183,20 @@ public class PlayerMovement : MonoBehaviour
         if (IsGrounded())
         {
             readyToJump = true;
-        }
+        }*/
         // Set the jump bools & check if the player can actually jump
         // if they can jump then perform the jump function
-        /*if (IsGrounded()){ //  && LastPressedJumpTime > 0
+        Debug.Log("CAN JUMP: " + CanJump() + ", J-TIME: " + LastPressedJumpTime);
+        Debug.Log("ISJUMPING: " + isJumping + ", G-TIME: " + LastOnGroundTime);
+        if (CanJump() && LastPressedJumpTime > 0)
+        { //  
             Debug.Log("Calling Jump...");
             isJumping = true; // player is now jumping
             isWallJumping = false; // player is still not wall jumping
             isJumpCut = false; // player still can't jump cut
             isJumpFalling = false; // player isn't jump falling
             Jump(); // perform the jump
-        }*/
+        }
         /*//WALL JUMP
 		else if (CanWallJump() && LastPressedJumpTime > 0)
 		{
@@ -275,7 +277,7 @@ public class PlayerMovement : MonoBehaviour
 
 #region Handle Inputs
     //Methods which whandle inputs detected & called from Update()
-    public void OnJumpInput() { // if the player is pressing down the jump button
+    public void OnJump() { // if the player is pressing down the jump button
         Debug.Log("pressed");
         LastPressedJumpTime = Data.jumpInputBufferTime; // set the last pressed jump time to the time of the jump input buffer
     }
