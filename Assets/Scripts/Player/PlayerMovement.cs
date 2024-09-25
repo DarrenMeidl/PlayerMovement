@@ -167,6 +167,8 @@ public class PlayerMovement : MonoBehaviour
             isJumpCut = false; // set the player to not be jump cutting
             isJumpFalling = false; // set the player to not be jump falling
         }
+        Debug.Log("READY TO JUMP: " + readyToJump);
+        Debug.Log("GROUNDED: " + IsGrounded());
         if (Input.GetKey(jumpKey) && readyToJump && IsGrounded())
         {
             Debug.Log("Calling Jump...");
@@ -178,6 +180,10 @@ public class PlayerMovement : MonoBehaviour
             Jump(); // perform the jump
 
             Invoke(nameof(ResetJump), jumpCooldown); 
+        }
+        if (IsGrounded())
+        {
+            readyToJump = true;
         }
         // Set the jump bools & check if the player can actually jump
         // if they can jump then perform the jump function
@@ -404,7 +410,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void SpeedControl()
     {
-        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.y);
+        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
         // limit velocity if needed
         if(flatVel.magnitude > Data.walkMaxSpeed)
