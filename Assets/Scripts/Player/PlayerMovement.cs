@@ -45,10 +45,7 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector] public bool isJumpCut; // is the player jump cutting? - public so other scripts can read & set it
     private bool isJumpFalling; // is the player jump falling?
     
-    public float jumpForce;
-    public float jumpCooldown;
     public float airMultiplier;
-    bool readyToJump;
 
     // Wall Jump
     private float _wallJumpStartTime;
@@ -166,30 +163,12 @@ public class PlayerMovement : MonoBehaviour
             isJumpCut = false; // set the player to not be jump cutting
             isJumpFalling = false; // set the player to not be jump falling
         }
-        /*Debug.Log("READY TO JUMP: " + readyToJump);
-        Debug.Log("GROUNDED: " + IsGrounded());
-        if (Input.GetKey(jumpKey) && readyToJump && IsGrounded())
-        {
-            Debug.Log("Calling Jump...");
-            readyToJump = false;
-            isJumping = true; // player is now jumping
-            isWallJumping = false; // player is still not wall jumping
-            isJumpCut = false; // player still can't jump cut
-            isJumpFalling = false; // player isn't jump falling
-            Jump(); // perform the jump
-
-            Invoke(nameof(ResetJump), jumpCooldown); 
-        }
-        if (IsGrounded())
-        {
-            readyToJump = true;
-        }*/
         // Set the jump bools & check if the player can actually jump
         // if they can jump then perform the jump function
         Debug.Log("CAN JUMP: " + CanJump() + ", J-TIME: " + LastPressedJumpTime);
         Debug.Log("ISJUMPING: " + isJumping + ", G-TIME: " + LastOnGroundTime);
         if (CanJump() && LastPressedJumpTime > 0)
-        { //  
+        { 
             Debug.Log("Calling Jump...");
             isJumping = true; // player is now jumping
             isWallJumping = false; // player is still not wall jumping
@@ -283,7 +262,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // If this function is being called it means the player is releasing the jump button
-    public void OnJumpUpInput()
+    public void OnJumpUp()
     {
         // so if the player is rising up in the air & their bool says they're currently gronund jumping
         // that means you can cut the ground jump
@@ -431,14 +410,10 @@ public class PlayerMovement : MonoBehaviour
             LastOnGroundTime = 0;
             // reset y velocity
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(transform.up * jumpForce, ForceMode.Impulse); // add force to the player in the y direction
+            rb.AddForce(transform.up * Data.jumpForce, ForceMode.Impulse); // add force to the player in the y direction
             //AudioManager.Instance.PlayPlayerSFX("Player Jump"); // play the jump sound
             Debug.Log("JUMPED");
             //jumpDust.Play(); // play the jump dust particle
-        }
-        private void ResetJump()
-        {
-            readyToJump = true;
         }
     #endregion
         #region Wall Jump
