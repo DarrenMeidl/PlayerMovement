@@ -7,10 +7,10 @@ public class CustomGravity : MonoBehaviour
 {
     //Scriptable object which holds all the player's movement parameters
     public GravityData Data; // the player data scriptable object   
-
+    public PlayerData pData; // the player data scriptable object 
     // Gravity Scale editable on the inspector
     // providing a gravity scale per object
-    [SerializeField] private float gravityScale = 1.0f;
+    private float gravityScale;
 
     // Global Gravity doesn't appear in the inspector. Modify it here in the code
     // (or via scripting) to define a different default gravity for all objects.
@@ -19,6 +19,7 @@ public class CustomGravity : MonoBehaviour
 
     Rigidbody rb;
     PlayerMovement pm;
+    private bool onPlayer;
 
     void OnEnable()
     {
@@ -28,20 +29,45 @@ public class CustomGravity : MonoBehaviour
         pm = GetComponent<PlayerMovement>();
         if (pm != null)
         {
-            gravityScale = Data.fallGravityMult;
+            onPlayer = true;
         }
         
     }
 
     void Update()
     {
-        if (pm != null)
+        if (onPlayer)
         {
-            if (pm.isJumpCut)
+            if (pm.isSliding)
+            {
+                gravityScale = 0;
+            }
+            else if (pm.isJumpCut)
+            {
+                //Higher gravity if jump button released
+                gravityScale = (Data.gravityScale * Data.jumpCutGravityMult);
+                rb.velocity = new Vector3(rb.velocity.x, Mathf.Max(rb.velocity.y, -Data.maxFallSpeed), rb.velocity.z);
                 gravityScale = Data.jumpCutGravityMult;
-
+            }
+            //Higher gravity if we've released the jump input or are falling
+            else if ((pm.isJumping || pm.isJumpFalling) && Mathf.Abs(rb.velocity.y) < pData.jumpHangTimeThreshold)
+            {
+                gravityScale = (Data.gravityScale * pData.jumpHangGravityMult);
+            }
+            // if the player is falling
+            else if (rb.velocity.y < -.1f)
+            {
+                //Higher gravity if falling
+                gravityScale = (Data.gravityScale * Data.fallGravityMult);
+                //Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
+                rb.velocity = new Vector3(rb.velocity.x, Mathf.Max(rb.velocity.y, -Data.maxFallSpeed), rb.velocity.z);
+            }
             else
+            {
+                //Default gravity if standing on a platform or moving upwards
                 gravityScale = Data.fallGravityMult;
+            }
+                
         }
     }
     void FixedUpdate()

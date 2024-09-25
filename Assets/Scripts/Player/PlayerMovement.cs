@@ -43,8 +43,8 @@ public class PlayerMovement : MonoBehaviour
 
     // Jump Variables
     [HideInInspector] public bool isJumpCut; // is the player jump cutting? - public so other scripts can read & set it
-    private bool isJumpFalling; // is the player jump falling?
-    
+    public bool isJumpFalling { get; private set; }
+
     public float airMultiplier;
 
     // Wall Jump
@@ -190,38 +190,6 @@ public class PlayerMovement : MonoBehaviour
             rb.drag = Data.groundDrag;       
         else
             rb.drag = 0;
-        #endregion
-        
-        #region Gravity
-        /*//Higher gravity if we've released the jump input or are falling
-        if (isSliding)
-        {
-            SetGravityScale(0);
-        }
-        else if (isJumpCut)
-        {
-            //Higher gravity if jump button released
-            SetGravityScale(Data.gravityScale * Data.jumpCutGravityMult);
-            rb.velocity = new Vector3(rb.velocity.x, Mathf.Max(rb.velocity.y, -Data.maxFallSpeed), rb.velocity.z);
-        }
-        else if ((isJumping || isWallJumping || isJumpFalling) && Mathf.Abs(rb.velocity.y) < Data.jumpHangTimeThreshold)
-        {
-            SetGravityScale(Data.gravityScale * Data.jumpHangGravityMult);
-        }
-        // if the player is falling
-        else if (rb.velocity.y < -.1f)
-        {
-            //Higher gravity if falling
-            SetGravityScale(Data.gravityScale * Data.fallGravityMult);
-            //Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
-            rb.velocity = new Vector3(rb.velocity.x, Mathf.Max(rb.velocity.y, -Data.maxFallSpeed), rb.velocity.z);
-        }
-        else
-        {
-            //Default gravity if standing on a platform or moving upwards
-            SetGravityScale(Data.gravityScale);
-        }
-        */
         #endregion
 
     }

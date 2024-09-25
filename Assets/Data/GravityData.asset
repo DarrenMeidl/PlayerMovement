@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GravityData
   m_EditorClassIdentifier: 
   fallGravityMult: 5
-  maxFallSpeed: 5
+  maxFallSpeed: 20
   gravityStrength: 0
   gravityScale: 0
   jumpCutGravityMult: 10
