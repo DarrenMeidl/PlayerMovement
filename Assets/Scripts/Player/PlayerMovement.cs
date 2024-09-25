@@ -44,6 +44,12 @@ public class PlayerMovement : MonoBehaviour
     // Jump Variables
     [HideInInspector] public bool isJumpCut; // is the player jump cutting? - public so other scripts can read & set it
     private bool isJumpFalling; // is the player jump falling?
+    
+    public float jumpForce;
+    public float jumpCooldown;
+    public float airMultiplier;
+    bool readyToJump;
+    public KeyCode jumpKey = KeyCode.Space;
 
     // Wall Jump
     private float _wallJumpStartTime;
@@ -161,16 +167,28 @@ public class PlayerMovement : MonoBehaviour
             isJumpCut = false; // set the player to not be jump cutting
             isJumpFalling = false; // set the player to not be jump falling
         }
+        if (Input.GetKey(jumpKey) && readyToJump && IsGrounded())
+        {
+            Debug.Log("Calling Jump...");
+            readyToJump = false;
+            isJumping = true; // player is now jumping
+            isWallJumping = false; // player is still not wall jumping
+            isJumpCut = false; // player still can't jump cut
+            isJumpFalling = false; // player isn't jump falling
+            Jump(); // perform the jump
+
+            Invoke(nameof(ResetJump), jumpCooldown); 
+        }
         // Set the jump bools & check if the player can actually jump
         // if they can jump then perform the jump function
-        if (IsGrounded()){ //  && LastPressedJumpTime > 0
+        /*if (IsGrounded()){ //  && LastPressedJumpTime > 0
             Debug.Log("Calling Jump...");
             isJumping = true; // player is now jumping
             isWallJumping = false; // player is still not wall jumping
             isJumpCut = false; // player still can't jump cut
             isJumpFalling = false; // player isn't jump falling
             Jump(); // perform the jump
-        }
+        }*/
         /*//WALL JUMP
 		else if (CanWallJump() && LastPressedJumpTime > 0)
 		{
@@ -187,10 +205,6 @@ public class PlayerMovement : MonoBehaviour
 
 			WallJump(_lastWallJumpDir);
 		}*/
-        else
-        {
-            //Debug.Log("CANT JUMP");
-        }
         #endregion
 
         #region Slide Checks
@@ -255,10 +269,10 @@ public class PlayerMovement : MonoBehaviour
 
 #region Handle Inputs
     //Methods which whandle inputs detected & called from Update()
-    public void OnJump() { // if the player is pressing down the jump button
+    public void OnJumpInput() { // if the player is pressing down the jump button
         Debug.Log("pressed");
-		LastPressedJumpTime = Data.jumpInputBufferTime; // set the last pressed jump time to the time of the jump input buffer
-	}
+        LastPressedJumpTime = Data.jumpInputBufferTime; // set the last pressed jump time to the time of the jump input buffer
+    }
 
     // If this function is being called it means the player is releasing the jump button
     public void OnJumpUpInput()
@@ -379,7 +393,10 @@ public class PlayerMovement : MonoBehaviour
         float movement = speedDif * accelRate; // the movement of the player
         */
         walkDir = orientation.forward * direction.y + orientation.right * direction.x;
-        rb.AddForce(walkDir.normalized * Data.walkMaxSpeed * 10f, ForceMode.Force); // add force to the player in the x direction
+        if (IsGrounded())
+            rb.AddForce(walkDir.normalized * Data.walkMaxSpeed * 10f, ForceMode.Force); // add force to the player in the x direction
+        else if (!IsGrounded())
+            rb.AddForce(walkDir.normalized * Data.walkMaxSpeed * 10f * airMultiplier, ForceMode.Force);
     }
     // Function to calculate the moveSpeed variable of the player
     private void CalculateMoveSpeed(){
@@ -406,10 +423,14 @@ public class PlayerMovement : MonoBehaviour
             LastOnGroundTime = 0;
             // reset y velocity
             rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(transform.up * Data.jumpForce, ForceMode.Impulse); // add force to the player in the y direction
+            rb.AddForce(transform.up * jumpForce, ForceMode.Impulse); // add force to the player in the y direction
             //AudioManager.Instance.PlayPlayerSFX("Player Jump"); // play the jump sound
             Debug.Log("JUMPED");
             //jumpDust.Play(); // play the jump dust particle
+        }
+        private void ResetJump()
+        {
+            readyToJump = true;
         }
     #endregion
         #region Wall Jump
