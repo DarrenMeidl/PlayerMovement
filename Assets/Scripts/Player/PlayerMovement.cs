@@ -114,7 +114,14 @@ public class PlayerMovement : MonoBehaviour
         #region Input Handler
 
         // code for handling movement like walk, jump, wall jump, slide etc.
-
+        if (Keyboard.current.spaceKey.isPressed)
+        {
+            OnJumpDown();
+        }
+        else if (Keyboard.current.spaceKey.wasReleasedThisFrame)
+        {
+            OnJumpUp();
+        }
        
         #endregion
         
@@ -256,7 +263,7 @@ public class PlayerMovement : MonoBehaviour
 
 #region Handle Inputs
     //Methods which whandle inputs detected & called from Update()
-    public void OnJump() { // if the player is pressing down the jump button
+    public void OnJumpDown() { // if the player is pressing down the jump button
         Debug.Log("pressed");
         LastPressedJumpTime = Data.jumpInputBufferTime; // set the last pressed jump time to the time of the jump input buffer
     }
@@ -380,9 +387,9 @@ public class PlayerMovement : MonoBehaviour
         float movement = speedDif * accelRate; // the movement of the player
         */
         walkDir = orientation.forward * direction.y + orientation.right * direction.x;
-        if (IsGrounded())
+        if (LastOnGroundTime >= 0)
             rb.AddForce(walkDir.normalized * Data.walkMaxSpeed * 10f, ForceMode.Force); // add force to the player in the x direction
-        else if (!IsGrounded())
+        else if (LastOnGroundTime < 0)
             rb.AddForce(walkDir.normalized * Data.walkMaxSpeed * 10f * airMultiplier, ForceMode.Force);
     }
     // Function to calculate the moveSpeed variable of the player

@@ -33,7 +33,7 @@ MonoBehaviour:
   jumpHangMaxSpeedMult: 0
   jumpHeight: 5
   jumpTimeToApex: 1.3
-  jumpForce: 14
+  jumpForce: 20
   wallJumpForce: {x: 0, y: 0}
   wallJumpRunLerp: 0.3
   wallJumpTime: 0
