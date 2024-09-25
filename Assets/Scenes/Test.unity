@@ -573,8 +573,6 @@ MonoBehaviour:
   Data: {fileID: 11400000, guid: c40b9756b9225c64299b880bc679769b, type: 2}
   orientation: {fileID: 532846065}
   isJumpCut: 0
-  jumpForce: 12
-  jumpCooldown: 0.25
   airMultiplier: 0.4
   jumpableGround:
     serializedVersion: 2
@@ -694,7 +692,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 112
@@ -741,5 +739,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d50d1e31dc1864142bd0ae9441bd5036, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Data: {fileID: 11400000, guid: c40b9756b9225c64299b880bc679769b, type: 2}
+  Data: {fileID: 11400000, guid: d2948ed8d3efbba41a95dbe8cb71432b, type: 2}
   gravityScale: 10

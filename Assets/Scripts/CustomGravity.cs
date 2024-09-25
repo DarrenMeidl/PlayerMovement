@@ -6,7 +6,7 @@ using UnityEngine;
 public class CustomGravity : MonoBehaviour
 {
     //Scriptable object which holds all the player's movement parameters
-    public PlayerData Data; // the player data scriptable object   
+    public GravityData Data; // the player data scriptable object   
 
     // Gravity Scale editable on the inspector
     // providing a gravity scale per object
@@ -19,7 +19,6 @@ public class CustomGravity : MonoBehaviour
 
     Rigidbody rb;
     PlayerMovement pm;
-    private bool usePlayerData;
 
     void OnEnable()
     {
@@ -30,10 +29,21 @@ public class CustomGravity : MonoBehaviour
         if (pm != null)
         {
             gravityScale = Data.fallGravityMult;
-            usePlayerData = true;
-        }  
+        }
+        
     }
 
+    void Update()
+    {
+        if (pm != null)
+        {
+            if (pm.isJumpCut)
+                gravityScale = Data.jumpCutGravityMult;
+
+            else
+                gravityScale = Data.fallGravityMult;
+        }
+    }
     void FixedUpdate()
     {
         Vector3 gravity = globalGravity * gravityScale * Vector3.up;

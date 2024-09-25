@@ -94,15 +94,11 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody>(); // get the rigidbody of the player object
         playerCollider = GetComponent<CapsuleCollider>(); // get the box collider of the player object
         input = GetComponent<PlayerInput>(); // get PlayerInput of the player object
-        //_characterController = GetComponent<CharacterController>();
         #region Actions
         walkAction = input.actions.FindAction("Walk");
         #endregion
     }   
-    
-    private void Start(){ // we do this on Start to ensure that the player data is loaded before we start using it
-        SetGravityScale(Data.gravityScale); // set the gravity scale of the player to the gravity scale in the player data
-    }
+   
     private void Update()
     {
         #region Timers
@@ -160,11 +156,6 @@ public class PlayerMovement : MonoBehaviour
             isJumping = false; // set the player to not be jumping
             isJumpFalling = true; // set the player to be jump falling
         }
-        // if the player is wall jumping and the time since the wall jump started is greater than the wall jump time
-        if (isWallJumping && Time.time - _wallJumpStartTime > Data.wallJumpTime)
-		{
-			isWallJumping = false;
-		}
         // if the player is not jumping and the last time the player was on the ground is bigger than 0
         if (LastOnGroundTime > 0 && !isJumping && !isWallJumping){ 
             isJumpCut = false; // set the player to not be jump cutting
@@ -172,33 +163,14 @@ public class PlayerMovement : MonoBehaviour
         }
         // Set the jump bools & check if the player can actually jump
         // if they can jump then perform the jump function
-        Debug.Log("CAN JUMP: " + CanJump() + ", J-TIME: " + LastPressedJumpTime);
-        Debug.Log("ISJUMPING: " + isJumping + ", G-TIME: " + LastOnGroundTime);
         if (CanJump() && LastPressedJumpTime > 0)
         { 
-            Debug.Log("Calling Jump...");
             isJumping = true; // player is now jumping
             isWallJumping = false; // player is still not wall jumping
             isJumpCut = false; // player still can't jump cut
             isJumpFalling = false; // player isn't jump falling
             Jump(); // perform the jump
         }
-        /*//WALL JUMP
-		else if (CanWallJump() && LastPressedJumpTime > 0)
-		{
-            //AudioManager.Instance.PlayPlayerSFX("Player Wall Jump"); // play the wall jump sound
-            //wallJumpDust.Play(); // play the wall jump dust particle
-
-			isWallJumping = true;
-			isJumping = false;
-			isJumpCut = false;
-			isJumpFalling = false;
-
-			_wallJumpStartTime = Time.time;
-			//_lastWallJumpDir = (LastOnWallRightTime > 0) ? -1 : 1;
-
-			WallJump(_lastWallJumpDir);
-		}*/
         #endregion
 
         #region Slide Checks
@@ -219,7 +191,7 @@ public class PlayerMovement : MonoBehaviour
         else
             rb.drag = 0;
         #endregion
-
+        
         #region Gravity
         /*//Higher gravity if we've released the jump input or are falling
         if (isSliding)
@@ -264,13 +236,13 @@ public class PlayerMovement : MonoBehaviour
 #region Handle Inputs
     //Methods which whandle inputs detected & called from Update()
     public void OnJumpDown() { // if the player is pressing down the jump button
-        Debug.Log("pressed");
         LastPressedJumpTime = Data.jumpInputBufferTime; // set the last pressed jump time to the time of the jump input buffer
     }
 
     // If this function is being called it means the player is releasing the jump button
     public void OnJumpUp()
     {
+        Debug.Log("CANCELLING JUMP..");
         // so if the player is rising up in the air & their bool says they're currently gronund jumping
         // that means you can cut the ground jump
         if (CanJumpCut())
@@ -278,15 +250,12 @@ public class PlayerMovement : MonoBehaviour
             // because the player has already released the jump button mid-ground jump,
             // they want to cancel the ground jump,
             // so we set the jump cut bool to true straight away
+            Debug.Log("CANCEL JUMP..");
             isJumpCut = true;
         }
     }
 #endregion
 #region General Functions
-    // Function to set the gravity scale of the player
-    private void SetGravityScale(float gravScale){
-        //rb.gravityScale = gravScale; // set the gravity scale of the player to the gravity scale passed into the function
-    }
     private void Sleep(float duration) {
 		//Method used so we don't need to call StartCoroutine everywhere
 		//nameof() notation means we don't need to input a string directly.
@@ -301,25 +270,13 @@ public class PlayerMovement : MonoBehaviour
 	}
 #endregion
 #region Bool Functions
-
     private bool CanJump() // checks if player can ground jump
     {
 		return LastOnGroundTime > 0 && !isJumping;
     }
-    private bool CanWallJump() {
-        // we don't want to allow wall jumps when crouched because our wall check is above crouch collider, thus being able to wall jump from the ceiling
-		return LastPressedJumpTime > 0 && LastOnWallTime > 0 && LastOnGroundTime <= 0;
-	}
     private bool CanJumpCut() { // checks if player can cancel the ground jump early (jump cutting)
 		return isJumping && rb.velocity.y > .1f;
     }
-    private bool CanWallJumpCut() {
-		return isWallJumping && rb.velocity.y > .1f;
-	}
-    /*private bool IsWalled(){ // checks if the player is colliding with a wall
-        // creates new box the position & size of the wallCheck transform, 0 means it can't rotate, moves right * direction of player x by .1f, is it colliding with a jumpable wall?
-        return Physics2D.BoxCast(wallCheck.position, wallCheck.localScale/2, 0f, Vector2.right * transform.localScale.x, .1f, jumpableWall); // check if the player is walled (if the player is touching the wall, return true, else return false)
-    }*/
     private bool IsGrounded(){ // checks if the player is grounded
         // creates a new box the position & size of the player's crouching collider, 0 means it can't rotate, moves down by .1f, is it colliding with jumpable ground?
         return Physics.Raycast(transform.position, Vector3.down, Data.height * .5f + .2f, jumpableGround); // check if the player is grounded (if the player is touching the ground, return true, else return false)
@@ -338,13 +295,7 @@ public class PlayerMovement : MonoBehaviour
 #region Walk Functions
     // Function to handle the walking of the player
     private void HandleWalk(){
-        if (isWallJumping){ // if player is wall jumping
-            Walk(Data.wallJumpRunLerp); // walk the player with the wall jump lerp amount
-        }
-        else {
-            Walk(1); // walk the player
-        }       
-        
+        Walk(1); // walk the player            
     }
     // Walk function
     private void Walk(float lerpAmount){
@@ -409,42 +360,18 @@ public class PlayerMovement : MonoBehaviour
     }
     #endregion
 #region Jump Functions
-        #region Jump
-        private void Jump()
-        {
-            //Ensures we can't call Jump multiple times from one press during small time window of the coyote or jump buffer time
-            LastPressedJumpTime = 0;
-            LastOnGroundTime = 0;
-            // reset y velocity
-            rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-            rb.AddForce(transform.up * Data.jumpForce, ForceMode.Impulse); // add force to the player in the y direction
-            //AudioManager.Instance.PlayPlayerSFX("Player Jump"); // play the jump sound
-            Debug.Log("JUMPED");
-            //jumpDust.Play(); // play the jump dust particle
-        }
-    #endregion
-        #region Wall Jump
-        private void WallJump(int dir) {
-		    //Ensures we can't call Wall Jump multiple times from one press
-		    LastPressedJumpTime = 0;
-		    LastOnGroundTime = 0;
-
-		    #region Perform Wall Jump
-		    Vector2 force = new Vector2(Data.wallJumpForce.x, Data.wallJumpForce.y);
-		    force.x *= dir; //apply force in opposite direction of wall
-
-		    if (Mathf.Sign(rb.velocity.x) != Mathf.Sign(force.x))
-			    force.x -= rb.velocity.x;
-            // if player is jumping or falling, we subtract the velocity.y (counteracting force of gravity)
-		    if (rb.velocity.y < -.1f || rb.velocity.y > .1f) // This ensures the player always reaches our desired jump force (not greater or less)
-			    force.y -= rb.velocity.y;
-
-		    //Unlike in the run we want to use the Impulse mode.
-		    //The default mode will apply are force instantly ignoring masss
-		    rb.AddForce(force, ForceMode.Impulse);
-		    #endregion
-	    }
-    #endregion
+    private void Jump()
+    {
+        //Ensures we can't call Jump multiple times from one press during small time window of the coyote or jump buffer time
+        LastPressedJumpTime = 0;
+        LastOnGroundTime = 0;
+        // reset y velocity
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        rb.AddForce(transform.up * Data.jumpForce, ForceMode.Impulse); // add force to the player in the y direction
+        //AudioManager.Instance.PlayPlayerSFX("Player Jump"); // play the jump sound
+        Debug.Log("JUMPED");
+        //jumpDust.Play(); // play the jump dust particle
+    }
 #endregion
 #region Other Movement Functions
     private void HandleSlide()

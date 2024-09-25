@@ -2,14 +2,6 @@ using UnityEngine;
 
 [CreateAssetMenu(menuName = "Player Data")] //Create a new playerData object by right clicking in the Project Menu then Create/Player/Player Data and drag onto the player
 public class PlayerData : ScriptableObject {
-	[Header("Gravity")]
-	public float fallGravityMult; //Multiplier to the player's gravityScale when falling.
-	public float maxFallSpeed; //Maximum fall speed (terminal velocity) of the player when falling.
-	[HideInInspector] public float gravityStrength; //Downwards force (gravity) needed for the desired jumpHeight and jumpTimeToApex.
-	[HideInInspector] public float gravityScale; //Strength of the player's gravity as a multiplier of gravity (set in ProjectSettings/Physics2D).
-										  		 //Also the value the player's rigidbody2D.gravityScale is set to.
-	[Space(20)] // Space between the two headers
-
     [Header("Walk")]
     public float walkMaxSpeed; //Target speed we want the player to reach.
 	public float moveSpeed; //The speed at which our player moves.
@@ -38,15 +30,6 @@ public class PlayerData : ScriptableObject {
 	//[HideInInspector] public float jumpForce; //The actual force applied (upwards) to the player when they jump.	
 	public float jumpForce;
 
-	[Header("Wall Jump")]
-	public Vector2 wallJumpForce; //The actual force (this time set by us) applied to the player when wall jumping.
-	[Space(5)]
-	[Range(0f, 1f)] public float wallJumpRunLerp; //Reduces the effect of player's movement while wall jumping.
-	[Range(0f, 1.5f)] public float wallJumpTime; //Time after wall jumping the player's movement is slowed for.
-	public bool doTurnOnWallJump; //Player will rotate to face wall jumping direction
-
-	[Space(20)]
-
 	[Header("Slide")]
 	public float slideSpeed;
 	public float slideAccel;
@@ -62,11 +45,6 @@ public class PlayerData : ScriptableObject {
     //Unity Callback, called when the inspector updates
     private void OnValidate()
     {
-		// GRAVITY
-		//Calculate gravity strength using the formula (gravity = 2 * jumpHeight / timeToJumpApex^2) 
-		gravityStrength = -(2 * jumpHeight) / (jumpTimeToApex * jumpTimeToApex);
-		//Calculate the rigidbody's gravity scale (ie: gravity strength relative to unity's gravity value, see project settings/Physics2D)
-		gravityScale = gravityStrength / Physics2D.gravity.y;
 		// RUN
 		//Calculate are run acceleration & deceleration forces using formula: amount = ((1 / Time.fixedDeltaTime) * acceleration) / runMaxSpeed
 		runAccelAmount = (50 * runAcceleration) / walkMaxSpeed;
