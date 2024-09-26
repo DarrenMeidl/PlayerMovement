@@ -23,10 +23,10 @@ MonoBehaviour:
   deccelInAir: 0
   doConserveMomentum: 1
   jumpCutGravityMult: 7
-  jumpHangGravityMult: 1
-  jumpHangTimeThreshold: 0.5
-  jumpHangAccelerationMult: 10
-  jumpHangMaxSpeedMult: 0.5
+  jumpHangGravityMult: 0
+  jumpHangTimeThreshold: 1.2
+  jumpHangAccelerationMult: 1
+  jumpHangMaxSpeedMult: 1
   jumpHeight: 5
   jumpTimeToApex: 1.3
   jumpForce: 20

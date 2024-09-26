@@ -31,7 +31,6 @@ public class CustomGravity : MonoBehaviour
         {
             onPlayer = true;
         }
-        
     }
 
     void Update()

@@ -740,4 +740,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Data: {fileID: 11400000, guid: d2948ed8d3efbba41a95dbe8cb71432b, type: 2}
-  gravityScale: 10
+  pData: {fileID: 11400000, guid: c40b9756b9225c64299b880bc679769b, type: 2}
